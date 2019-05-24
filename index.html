@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="minimum-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no"/>
+    <meta charset="utf-8">
+    <title>socketchat</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<h1>Waiting for server</h1>
+<div class="messages"></div>
+<div class='nickname'>
+    <label for="nickname">Nickname</label>
+    <input type="text" id="nickname" />
+</div>
+<form action="javascript:void(0)">
+    <label for="message" id="cursor">&gt;</label>
+    <input type="text" id="message" required autofocus />
+</form>
+<script src="ws-client.js"></script>
+</body>
+</html>

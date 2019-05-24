@@ -1,0 +1,17 @@
+{
+  "name": "ws-chat",
+  "version": "1.0.0",
+  "description": "A sample of a websocket chat app",
+  "main": "ws.js",
+  "scripts": {
+    "start": "open index.html & node ws"
+  },
+  "keywords": [
+    "Websocket"
+  ],
+  "author": "Matei D",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^7.0.0"
+  }
+}
