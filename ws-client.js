@@ -3,9 +3,28 @@ var connectInt;
 var retrying = false;
 var quit = false;
 
+function setTitle(title) {
+    document.querySelector('#title').innerHTML = title;
+}
+
+function printMessage(message) {
+    //check if message is from me, server or other person
+    var p = document.createElement('p');
+    if (message.type && message.type === 'me') {
+        p.className = 'mine'
+        p.innerText = message.nickname+": " + message.msg;
+    }
+    else if (message.type && message.type === 'server') {
+        p.innerText = "Server: " + message.msg;
+    }
+    else p.innerText = message.nickname+": " + message.msg;
+    document.querySelector('div.messages').appendChild(p);
+}
+
 var connect = function(){
  try {
     ws = new WebSocket("ws://localhost:3000");
+    // treat connection states
     ws.onopen = function() {
         setTitle("Connected");
         if (connectInt) {
@@ -23,11 +42,12 @@ var connect = function(){
             setTitle("DISCONNECTED");
             var p = document.createElement('p');
             p.className = 'connect';
-            p.innerText = "Disconnected. Please try again laterz";
+            p.innerText = "Disconnected. Please try again later";
             document.querySelector('div.messages').appendChild(p);
         }
         retrying = true;
         clearTimeout(connectInt);
+        // try to reconnect every 3 secs after disconnect if user did not quit with command
         if (!quit) connectInt = setTimeout(connect,3000);
     };
 
@@ -36,7 +56,7 @@ var connect = function(){
             setTitle("DISCONNECTED");
             var p = document.createElement('p');
             p.className = 'connect';
-            p.innerText = "Disconnected. Please try again later";
+            p.innerText = "SOcket Error. Disconnected. Please try again later";
             document.querySelector('div.messages').appendChild(p);
         }
         retrying = true;
@@ -53,12 +73,12 @@ var connect = function(){
      console.log(error);
  }
  finally {
-    console.log('fin');
  }
 }
 
 connect();
 
+//send message
 document.forms[0].onsubmit = function () {
     var input = document.querySelector('#message');
     if (input.value === ':wq!') quit = true;
@@ -66,28 +86,13 @@ document.forms[0].onsubmit = function () {
     input.value = '';
     var input = document.querySelector('#nickname');
     var nickname = input.value;
+    // send nickname and message as json string
     var toSend = {nickname:nickname,message:message}
     console.log("sending: "+JSON.stringify(toSend));
     ws.send(JSON.stringify(toSend));
 };
 
-function setTitle(title) {
-    document.querySelector('h1').innerHTML = title;
-}
-
-function printMessage(message) {
-    var p = document.createElement('p');
-    if (message.type && message.type === 'me') {
-        p.className = 'mine'
-        p.innerText = message.nickname+": " + message.msg;
-    }
-    else if (message.type && message.type === 'server') {
-        p.innerText = "Server: " + message.msg;
-    }
-    else p.innerText = message.nickname+": " + message.msg;
-    document.querySelector('div.messages').appendChild(p);
-}
-
+//cursor blink fun
 setInterval(function(){ 
     var label = document.querySelector('#cursor');
     var txt = label.innerText;
